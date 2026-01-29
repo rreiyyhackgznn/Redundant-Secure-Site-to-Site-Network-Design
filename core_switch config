@@ -1,0 +1,80 @@
+(loglar projeden import edilip gpt tarafından düzeltilmiştir)
+enable
+conf t
+
+! ===============================
+! BASIC SETTINGS
+! ===============================
+hostname CORE_SWITCH
+no ip domain-lookup
+enable password cisco
+
+! ===============================
+! MANAGEMENT IP (OPTIONAL)
+! ===============================
+interface vlan 1
+ ip address 192.168.10.2 255.255.255.0
+ no shutdown
+exit
+
+ip default-gateway 192.168.10.254
+
+! ===============================
+! ACCESS PORTS
+! ===============================
+
+interface fastEthernet0/1
+ description MERKEZ_PC
+ switchport mode access
+ spanning-tree portfast
+ no shutdown
+
+interface fastEthernet0/2
+ description SERVER
+ switchport mode access
+ spanning-tree portfast
+ no shutdown
+
+interface fastEthernet0/3
+ description ASA_INSIDE
+ switchport mode access
+ no shutdown
+
+interface fastEthernet0/4
+ description ROUTER_MERKEZ_1
+ switchport mode access
+ no shutdown
+
+interface fastEthernet0/5
+ description ROUTER_MERKEZ_2
+ switchport mode access
+ no shutdown
+
+! ===============================
+! MONITORING PC PORT
+! ===============================
+interface fastEthernet0/24
+ description MONITOR_PC
+ switchport mode access
+ no shutdown
+
+! ===============================
+! SPAN (PORT MIRRORING)
+! ===============================
+monitor session 1 source interface fa0/1
+monitor session 1 source interface fa0/2
+monitor session 1 source interface fa0/3
+monitor session 1 destination interface fa0/24
+
+! ===============================
+! SYSLOG
+! ===============================
+logging 192.168.10.10
+logging trap informational
+logging on
+
+! ===============================
+! END
+! ===============================
+end
+write memory
