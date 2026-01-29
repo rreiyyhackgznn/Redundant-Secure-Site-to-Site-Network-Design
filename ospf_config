@@ -1,0 +1,91 @@
+OSPF – FULL KOMUT SETİ (CHEAT SHEET)
+
+Aşağıdaki yapı merkez + branch router’lar için geçerli.
+(IP’leri kendi topolojine göre uyarlayabilirsin.)
+
+🧠 1️⃣ OSPF BAŞLATMA (GENEL)
+conf t
+router ospf 1
+ router-id X.X.X.X
+exit
+
+Örnek router-id’ler
+
+R0_MERKEZ → 1.1.1.1
+
+R1_MERKEZ → 1.1.1.2
+
+BRANCH1 → 2.2.2.2
+
+BRANCH2 → 3.3.3.3
+
+Router-id çok önemli, log ve troubleshooting’de hayat kurtarır.
+
+🌐 2️⃣ NETWORK TANIMLARI (AREA 0)
+🔹 Merkez Router (örnek)
+router ospf 1
+ network 10.0.0.0 0.0.0.255 area 0
+ network 192.168.10.0 0.0.0.255 area 0
+exit
+
+🔹 Branch 1
+router ospf 1
+ network 10.0.0.0 0.0.0.255 area 0
+ network 192.168.20.0 0.0.0.255 area 0
+exit
+
+🔹 Branch 2
+router ospf 1
+ network 10.0.0.0 0.0.0.255 area 0
+ network 192.168.30.0 0.0.0.255 area 0
+exit
+
+🔒 3️⃣ PASSIVE INTERFACE (BEST PRACTICE – ÇOK ÖNEMLİ)
+
+LAN tarafında OSPF hello atmasın diye:
+
+router ospf 1
+ passive-interface default
+ no passive-interface serial0/1/0
+exit
+
+
+Sadece WAN / Serial interface’ler OSPF konuşur
+Bu cümleyi raporda yazarsan çok profesyonel görünürsün
+
+⏱️ 4️⃣ OSPF TIMER (OPSİYONEL AMA HAVALI)
+interface serial0/1/0
+ ip ospf hello-interval 10
+ ip ospf dead-interval 40
+exit
+
+
+(Packet Tracer’da şart değil ama gerçek hayatta kullanılır)
+
+📜 5️⃣ OSPF LOGLARINI AÇMA (KANIT İÇİN 🔥)
+conf t
+router ospf 1
+ log-adjacency-changes
+exit
+
+
+Syslog’ta şunu görürsün:
+
+%OSPF-5-ADJCHG
+
+🧪 6️⃣ DEMO / TEST KOMUTLARI
+OSPF komşular
+show ip ospf neighbor
+
+OSPF rotalar
+show ip route ospf
+
+OSPF database
+show ip ospf database
+
+💥 7️⃣ OSPF LOG ÜRETME (BİLEREK)
+conf t
+interface serial0/1/0
+ shutdown
+ no shutdown
+end
